@@ -34,3 +34,54 @@ document.querySelector('.menu').onclick = () => {
         alignItems: 'center',
     });
 };
+
+const guestSearch = document.querySelector('#guest-search');
+const tableCards = [...document.querySelectorAll('.table-card')];
+const tableStatus = document.querySelector('#table-status');
+const normalizeSearch = (value) =>
+    value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
+const seatingTables = tableCards.map((card) => ({
+    card,
+    guests: [...card.querySelectorAll('li')].map((item) => ({
+        item,
+        name: normalizeSearch(item.textContent),
+    })),
+}));
+
+function filterTables() {
+    const query = normalizeSearch(guestSearch.value);
+    const tableNumber = query.match(/^(?:table\s*#?\s*|#\s*)?(\d+)$/);
+    const words = query.split(' ');
+    let visibleTables = 0;
+    let matchingGuests = 0;
+
+    seatingTables.forEach(({ card, guests }) => {
+        const matchesTable = tableNumber && Number(card.dataset.table) === Number(tableNumber[1]);
+        let hasMatchingGuest = false;
+        guests.forEach(({ item, name }) => {
+            const matches = Boolean(query && !tableNumber && words.every((word) => name.includes(word)));
+            item.classList.toggle('guest-match', matches);
+            if (matches) {
+                hasMatchingGuest = true;
+                matchingGuests++;
+            }
+        });
+        card.hidden = Boolean(query && !matchesTable && !hasMatchingGuest);
+        if (!card.hidden) visibleTables++;
+    });
+
+    tableStatus.textContent = !query
+        ? `${seatingTables.length} tables · ${seatingTables.reduce((sum, table) => sum + table.guests.length, 0)} guests listed`
+        : tableNumber
+          ? `${visibleTables} matching ${visibleTables === 1 ? 'table' : 'tables'}`
+          : `${matchingGuests} matching ${matchingGuests === 1 ? 'guest' : 'guests'} across ${visibleTables} ${visibleTables === 1 ? 'table' : 'tables'}`;
+    document.querySelector('#table-empty').hidden = visibleTables > 0;
+}
+
+document.querySelector('.table-search').hidden = false;
+guestSearch.addEventListener('input', filterTables);
+document.querySelector('#clear-table-search').addEventListener('click', () => {
+    guestSearch.value = '';
+    filterTables();
+    guestSearch.focus();
+});
