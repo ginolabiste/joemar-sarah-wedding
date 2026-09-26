@@ -1,4 +1,4 @@
-const target = new Date('2026-10-29T14:00:00+08:00').getTime();
+const target = new Date('2026-10-30T16:00:00+08:00').getTime();
 function tick() {
     const d = Math.max(0, target - Date.now()),
         day = Math.floor(d / 864e5),
@@ -39,7 +39,12 @@ const guestSearch = document.querySelector('#guest-search');
 const tableCards = [...document.querySelectorAll('.table-card')];
 const tableStatus = document.querySelector('#table-status');
 const normalizeSearch = (value) =>
-    value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
+    value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ');
 const seatingTables = tableCards.map((card) => ({
     card,
     guests: [...card.querySelectorAll('li')].map((item) => ({
@@ -59,7 +64,9 @@ function filterTables() {
         const matchesTable = tableNumber && Number(card.dataset.table) === Number(tableNumber[1]);
         let hasMatchingGuest = false;
         guests.forEach(({ item, name }) => {
-            const matches = Boolean(query && !tableNumber && words.every((word) => name.includes(word)));
+            const matches = Boolean(
+                query && !tableNumber && words.every((word) => name.includes(word)),
+            );
             item.classList.toggle('guest-match', matches);
             if (matches) {
                 hasMatchingGuest = true;
