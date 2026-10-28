@@ -38,6 +38,7 @@ document.querySelector('.menu').onclick = () => {
 const guestSearch = document.querySelector('#guest-search');
 const tableCards = [...document.querySelectorAll('.table-card')];
 const tableStatus = document.querySelector('#table-status');
+const allTablesStatus = tableStatus.textContent.trim();
 const normalizeSearch = (value) =>
     value
         .normalize('NFD')
@@ -59,9 +60,14 @@ function filterTables() {
     const words = query.split(' ');
     let visibleTables = 0;
     let matchingGuests = 0;
+    let matchingAreas = 0;
 
     seatingTables.forEach(({ card, guests }) => {
         const matchesTable = tableNumber && Number(card.dataset.table) === Number(tableNumber[1]);
+        const matchesArea = Boolean(query && !tableNumber && words.every((word) =>
+            normalizeSearch(card.querySelector('h3').textContent).includes(word),
+        ));
+        if (matchesArea) matchingAreas++;
         let hasMatchingGuest = false;
         guests.forEach(({ item, name }) => {
             const matches = Boolean(
@@ -73,15 +79,17 @@ function filterTables() {
                 matchingGuests++;
             }
         });
-        card.hidden = Boolean(query && !matchesTable && !hasMatchingGuest);
+        card.hidden = Boolean(query && !matchesTable && !matchesArea && !hasMatchingGuest);
         if (!card.hidden) visibleTables++;
     });
 
     tableStatus.textContent = !query
-        ? `${seatingTables.length} tables · ${seatingTables.reduce((sum, table) => sum + table.guests.length, 0)} guests listed`
+        ? allTablesStatus
         : tableNumber
           ? `${visibleTables} matching ${visibleTables === 1 ? 'table' : 'tables'}`
-          : `${matchingGuests} matching ${matchingGuests === 1 ? 'guest' : 'guests'} across ${visibleTables} ${visibleTables === 1 ? 'table' : 'tables'}`;
+          : matchingAreas
+            ? `${visibleTables} matching seating ${visibleTables === 1 ? 'area' : 'areas'}`
+            : `${matchingGuests} matching ${matchingGuests === 1 ? 'guest' : 'guests'} across ${visibleTables} seating ${visibleTables === 1 ? 'area' : 'areas'}`;
     document.querySelector('#table-empty').hidden = visibleTables > 0;
 }
 
