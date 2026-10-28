@@ -397,13 +397,15 @@ blockquote {
 .table-card[data-table='main-building'] ul {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(12, auto);
+    grid-template-rows: repeat(11, auto);
     grid-auto-flow: column;
     border-left: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border-top: 1px solid var(--line);
 }
 .table-card[data-table='main-building'] li {
     padding: 10px 14px;
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
     border-right: 1px solid var(--line);
 }
 @media (max-width: 600px) {
