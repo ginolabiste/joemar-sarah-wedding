@@ -46,6 +46,17 @@ const normalizeSearch = (value) =>
         .toLowerCase()
         .trim()
         .replace(/\s+/g, ' ');
+tableCards.forEach((card) => {
+    const list = card.querySelector('ul');
+    [...list.children]
+        .sort((a, b) =>
+            a.textContent.trim().localeCompare(b.textContent.trim(), 'en', {
+                sensitivity: 'base',
+                numeric: true,
+            }),
+        )
+        .forEach((item) => list.appendChild(item));
+});
 const seatingTables = tableCards.map((card) => ({
     card,
     guests: [...card.querySelectorAll('li')].map((item) => ({
