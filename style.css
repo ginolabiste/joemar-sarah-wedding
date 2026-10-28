@@ -387,6 +387,32 @@ blockquote {
     color: var(--olive);
     font-weight: 600;
 }
+.table-card[data-table='main-building'] {
+    grid-column: 1 / -1;
+}
+.table-card[data-table='main-building'] h3,
+.table-card[data-table='main-building'] .table-count {
+    text-align: center;
+}
+.table-card[data-table='main-building'] ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(11, auto);
+    grid-auto-flow: column;
+    border-left: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+.table-card[data-table='main-building'] li {
+    padding: 10px 14px;
+    border-right: 1px solid var(--line);
+}
+@media (max-width: 600px) {
+    .table-card[data-table='main-building'] ul {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+        grid-auto-flow: row;
+    }
+}
 .events {
     display: grid;
     grid-template-columns: 1fr 80px 1fr;
