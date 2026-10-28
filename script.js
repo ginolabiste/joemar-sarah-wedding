@@ -56,14 +56,14 @@ const seatingTables = tableCards.map((card) => ({
 
 function filterTables() {
     const query = normalizeSearch(guestSearch.value);
-    const tableNumber = query.match(/^(?:table\s*#?\s*|#\s*)?(\d+)$/);
+    const tableNumber = query.match(/^(?:table\s*#?\s*|#\s*)([a-z])$/);
     const words = query.split(' ');
     let visibleTables = 0;
     let matchingGuests = 0;
     let matchingAreas = 0;
 
     seatingTables.forEach(({ card, guests }) => {
-        const matchesTable = tableNumber && Number(card.dataset.table) === Number(tableNumber[1]);
+        const matchesTable = tableNumber && card.dataset.table === tableNumber[1];
         const matchesArea = Boolean(query && !tableNumber && words.every((word) =>
             normalizeSearch(card.querySelector('h3').textContent).includes(word),
         ));
